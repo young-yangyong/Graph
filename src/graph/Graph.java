@@ -1,4 +1,4 @@
-
+package graph;
 
 import java.util.List;
 import java.util.Map;
@@ -12,29 +12,33 @@ import java.util.Map;
  */
 public interface Graph<E, T, V> {
 
-    int getVexNum();
+    int getVertexNum();
 
     int getEdgeNum();
 
-    int findVertex(E Vertex);
+    GraphKind getKind();
 
-    List<Integer> findVertexes(E Vertex);
+    int findVertex(E vertex);
+
+    int findLastVertex(E vertex);
+
+    List<Integer> findVertexIndexes(E vertex);
 
     E getVertex(int index);
 
-    E setVertex(int index, E Vertex);
+    E setVertex(int index, E vertex);
 
-    boolean addVertex(E Vertex);
+    boolean addVertex(E vertex);
 
-    boolean addVertexes(List<E> Vertexes);
+    boolean addVertexes(List<E> vertexes);
 
-    boolean addVertex(int index, E Vertex);
+    void addVertex(int index, E vertex);
 
     E deleteVertex(int index);
 
-    E deleteFirstVertex(E Vertex);
+    E deleteFirstVertex(E vertex);
 
-    List<E> deleteVertexes(E Vertex);
+    List<E> deleteVertexes(E vertex);
 
     Edge<T, V> addEdgeByIndex(int index1, int index2);
 
@@ -82,13 +86,14 @@ public interface Graph<E, T, V> {
 
     List<E> getAdjacentVertexes(int index);
 
-    List<E> DFSTraverse(E[] Vertexes);
+    List<E> DFSTraverse(int index1, int index2);
 
-    List<E> BFSTraverse(E[] Vertexes);
+    List<E> BFSTraverse(int index1, int index2);
 
-    boolean isDigraph();
 
-    boolean isUnDigraph();
+    boolean isDirectedGraph();
+
+//    boolean isSparseGraph();
 
     boolean isCompletedGraph();
 
@@ -100,5 +105,16 @@ public interface Graph<E, T, V> {
 
     List<Edge<T, V>> getEdges();
 
+    List<E> getFirstPath(int index1, int index2);
+
+    List<List<E>> getPaths(int index1, int index2);
+
+    boolean hasPath(int index1, int index2);
+
+    List<E> getCycle(int index);
+
+    boolean isCycle(int index);
+
+    boolean isConnected(int index1, int index2);
 
 }

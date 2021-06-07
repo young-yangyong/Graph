@@ -1,4 +1,5 @@
 import com.sun.istack.internal.NotNull;
+import graph.GraphKind;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -308,24 +309,11 @@ public class MGraph<E, T, V> {
         return getAdjEdgesByIndex(index);
     }
 
-    /**
-     * 图的分类：
-     * DG 有向图
-     * DN 有向网
-     * UDG 无向图
-     * UDN 无向网
-     * （带权重的图通常称为网）
-     */
-    public enum GraphKind {
-        DG,
-        DN,
-        UDG,
-        UDN
-    }
+
 
     /**
-     * 弧（Arc）有方向，边（Edge）没有方向；
-     * 两者都是表示顶点（Vertex）之间的关系。
+     * 弧（Arc）有方向，边（graph.Edge）没有方向；
+     * 两者都是表示顶点（graph.Vertex）之间的关系。
      *
      * @param <T> 对无权图，使用boolean类型，用true或false表示相邻否；对带权图，则为权值类型。
      * @param <V> 该弧/边携带的信息类型

@@ -1,3 +1,5 @@
+package graph;
+
 import com.sun.istack.internal.NotNull;
 
 public  class Vertex<E> {
@@ -10,7 +12,7 @@ public  class Vertex<E> {
 
     @Override
     public String toString() {
-        return "Vertex{" +
+        return "graph.Vertex{" +
                 "value=" + value +
                 '}';
     }
