@@ -2,6 +2,7 @@ package graph;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 数据结构-图
@@ -41,8 +42,9 @@ public interface Graph<E, T, V> {
     List<E> deleteVertexes(E vertex);
 
     Edge<T, V> addEdgeByIndex(int index1, int index2);
+    Edge<T, V> addEdgeByIndex(int index1, int index2,T weight,V info);
 
-    List<Edge<T, V>> addEdgesByIndex(Map<Integer, Integer> indexes);
+    List<Edge<T, V>> addEdgesByIndex(Set<int[]> indexes);
 
     Edge<T, V> deleteEdge(int index1, int index2);
 
@@ -58,13 +60,13 @@ public interface Graph<E, T, V> {
 
     Edge<T, V> getFirstAdjacentEdge(int index);
 
-    List<Edge<T, V>> getAdjacentEdges(int index);
+    Set<Edge<T, V>> getAdjacentEdges(int index);
 
-    List<Edge<T, V>> getInEdges(int index);
+    Set<Edge<T, V>> getInEdges(int index);
 
     Edge<T, V> getFirstInEdge(int index);
 
-    List<Edge<T, V>> getOutEdges(int index);
+    Set<Edge<T, V>> getOutEdges(int index);
 
     Edge<T, V> getFirstOutEdge(int index);
 

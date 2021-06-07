@@ -7,8 +7,9 @@ import graph.Graph;
 import graph.GraphKind;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * 无向
@@ -22,7 +23,7 @@ public abstract class GraphByAdjacentMatrix<E, T, V> implements Graph<E, T, V> {
     /**
      * 邻接矩阵
      */
-    private List<List<Edge<T, V>>> AdjacentMatrix;
+    private final List<List<Edge<T, V>>> AdjacentMatrix;
     /**
      * 图的当前顶点数和弧数
      */
@@ -30,7 +31,7 @@ public abstract class GraphByAdjacentMatrix<E, T, V> implements Graph<E, T, V> {
     /**
      * 图的种类标志
      */
-    private GraphKind graphKind;
+    private final GraphKind graphKind;
 
     @Override
     public String toString() {
@@ -137,9 +138,9 @@ public abstract class GraphByAdjacentMatrix<E, T, V> implements Graph<E, T, V> {
 
 
     /**
-     * 判断顶点下标是否越界
+     * 判断顶点索引值是否越界
      *
-     * @param index 顶点下标
+     * @param index 顶点索引值
      */
     private void rangeCheck(int index) {
         if (index < 0 || index > VertexNum - 1)
@@ -210,11 +211,8 @@ public abstract class GraphByAdjacentMatrix<E, T, V> implements Graph<E, T, V> {
 
     @Override
     public boolean addVertexes(List<E> vertexes) {
-
         if (vertexes != null) {
             vertexes.forEach(this::addVertex);
-
-
         }
         return true;
     }
@@ -251,71 +249,191 @@ public abstract class GraphByAdjacentMatrix<E, T, V> implements Graph<E, T, V> {
 
     @Override
     public Edge<T, V> addEdgeByIndex(int index1, int index2) {
-        return null;
+        return addEdgeByIndex(index1, index2, null, null);
     }
 
     @Override
-    public List<Edge<T, V>> addEdgesByIndex(Map<Integer, Integer> indexes) {
-        return null;
+    public Edge<T, V> addEdgeByIndex(int index1, int index2, T weight, V info) {
+
+        growEdgeNum(AdjacentMatrix, index1, index2);
+        Edge<T, V> edge;
+        if (isNetwork())
+            edge = new Edge<>(index1, index2, weight, info);
+        else
+            edge = new Edge<>(index1, index2, true, info);
+        if (!isDirectedGraph()) {
+
+            AdjacentMatrix.get(index2).set(index1, edge);
+        }
+        return AdjacentMatrix.get(index1).set(index2, edge);
     }
 
+    @Override
+    public List<Edge<T, V>> addEdgesByIndex(Set<int[]> indexes) {
+        ArrayList<Edge<T, V>> edges = new ArrayList<>();
+        if (isNetwork() && isDirectedGraph()) {
+            indexes.forEach(e -> {
+                if (e.length != 2)
+                    throw new RuntimeException("生成弧/边有且仅有两个顶点的索引值");
+                else {
+                    growEdgeNum(AdjacentMatrix, e[0], e[1]);
+                    edges.add(AdjacentMatrix.get(e[0]).set(e[1], new Edge<>(e[0], e[1], null, null)));
+                }
+            });
+        } else if (!isNetwork() && isDirectedGraph()) {
+            indexes.forEach(e -> {
+                if (e.length != 2)
+                    throw new RuntimeException("生成弧/边有且仅有两个顶点的索引值");
+                else {
+                    growEdgeNum(AdjacentMatrix, e[0], e[1]);
+                    edges.add(AdjacentMatrix.get(e[0]).set(e[1], new Edge<>(e[0], e[1], true, null)));
+                }
+            });
+        } else if (isNetwork() && !isDirectedGraph()) {
+            indexes.forEach(e -> {
+                if (e.length != 2)
+                    throw new RuntimeException("生成弧/边有且仅有两个顶点的索引值");
+                else {
+                    growEdgeNum(AdjacentMatrix, e[0], e[1]);
+                    Edge<T, V> edge = new Edge<>(e[0], e[1], null, null);
+                    edges.add(AdjacentMatrix.get(e[0]).set(e[1], edge));
+                    AdjacentMatrix.get(e[1]).set(e[0], edge);
+                }
+            });
+        } else {
+            indexes.forEach(e -> {
+                if (e.length != 2)
+                    throw new RuntimeException("生成弧/边有且仅有两个顶点的索引值");
+                else {
+                    growEdgeNum(AdjacentMatrix, e[0], e[1]);
+                    Edge<T, V> edge = new Edge<>(e[0], e[1], true, null);
+                    edges.add(AdjacentMatrix.get(e[0]).set(e[1], edge));
+                    AdjacentMatrix.get(e[1]).set(e[0], edge);
+                }
+            });
+        }
+        return edges;
+    }
+
+   //下面都有错误
     @Override
     public Edge<T, V> deleteEdge(int index1, int index2) {
-        return null;
+        rangeCheck(index1);
+        rangeCheck(index2);
+        if (!isDirectedGraph()){
+            AdjacentMatrix.get(index2).set(index1,null);
+        }
+        --VertexNum;
+        return AdjacentMatrix.get(index1).set(index2,null);
     }
 
     @Override
     public Edge<T, V> updateEdge(int index1, int index2, T weight, V info) {
-        return null;
+        Edge<T, V> edge=getEdge(index1,index2);
+        if (edge!=null) {
+            if (isNetwork())
+                edge.setWeight(weight);
+            edge.setInfo(info);
+            return edge;
+        }else
+            throw new RuntimeException("<"+index1+","+index2+">"+"不是弧/边！");
     }
 
     @Override
     public Edge<T, V> updateEdgeWeight(int index1, int index2, T weight) {
-        return null;
+        Edge<T, V> edge=getEdge(index1,index2);
+        if (edge!=null) {
+            if (isNetwork())
+                edge.setWeight(weight);
+            return edge;
+        }else
+            throw new RuntimeException("<"+index1+","+index2+">"+"不是弧/边！");
     }
 
     @Override
     public Edge<T, V> updateEdgeInfo(int index1, int index2, V info) {
-        return null;
+        Edge<T, V> edge=getEdge(index1,index2);
+        if (edge!=null) {
+            edge.setInfo(info);
+            return edge;
+        }else
+            throw new RuntimeException("<"+index1+","+index2+">"+"不是弧/边！");
     }
 
     @Override
     public boolean hasEdge(int index1, int index2) {
-        return false;
+        rangeCheck(index1);
+        rangeCheck(index2);
+        return AdjacentMatrix.get(index1).get(index2)!=null;
     }
 
     @Override
     public Edge<T, V> getEdge(int index1, int index2) {
-        return null;
+        rangeCheck(index1);
+        rangeCheck(index2);
+        return AdjacentMatrix.get(index1).get(index2);
     }
 
     @Override
     public Edge<T, V> getFirstAdjacentEdge(int index) {
-        return null;
+        return getFirstOutEdge(index);
     }
 
     @Override
-    public List<Edge<T, V>> getAdjacentEdges(int index) {
-        return null;
+    public Set<Edge<T, V>> getAdjacentEdges(int index) {
+        Set<Edge<T, V>> edges= getInEdges(index);
+        if (isDirectedGraph()){
+            AdjacentMatrix.get(index).forEach(edge->{
+                if (edge!=null){
+                    edges.add(edge);
+                }
+            });
+        }
+        return edges;
     }
 
     @Override
-    public List<Edge<T, V>> getInEdges(int index) {
-        return null;
+    public Set<Edge<T, V>> getInEdges(int index) {
+        rangeCheck(index);
+        Set<Edge<T, V>> edges= new HashSet<>();
+        AdjacentMatrix.forEach(vector->{
+            Edge<T, V> edge = vector.get(index);
+            if (edge!=null)
+                edges.add(edge);
+        });
+        return edges;
     }
 
     @Override
     public Edge<T, V> getFirstInEdge(int index) {
+        rangeCheck(index);
+        for (List<Edge<T, V>> vector : AdjacentMatrix) {
+            Edge<T, V> edge = vector.get(index);
+            if (edge!=null)
+                return edge;
+        }
         return null;
     }
 
     @Override
-    public List<Edge<T, V>> getOutEdges(int index) {
-        return null;
+    public Set<Edge<T, V>> getOutEdges(int index) {
+        rangeCheck(index);
+        Set<Edge<T, V>> edges= new HashSet<>();
+        AdjacentMatrix.get(index).forEach(edge->{
+            if (edge!=null){
+                edges.add(edge);
+            }
+        });
+        return edges;
     }
 
     @Override
     public Edge<T, V> getFirstOutEdge(int index) {
+        rangeCheck(index);
+        for (Edge<T, V> edge : AdjacentMatrix.get(index)) {
+            if (edge!=null)
+                return edge;
+        }
         return null;
     }
 
