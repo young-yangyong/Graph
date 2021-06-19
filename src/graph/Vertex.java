@@ -1,8 +1,11 @@
 package graph;
 
-import com.sun.istack.internal.NotNull;
-
-public  class Vertex<E> {
+/**
+ * 该类未启用（为具有平行边的多重图做准备）
+ *
+ * @param <E> 顶点携带信息的类型
+ */
+public class Vertex<E> {
 
     private E value;
 

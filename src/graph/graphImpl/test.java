@@ -1,45 +1,30 @@
 package graph.graphImpl;
 
-import graph.Edge;
 import graph.GraphKind;
 
-import javax.xml.ws.soap.Addressing;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
 
-class aa extends GraphByAdjacentMatrix<Integer, String, String> {
 
-    public aa(List<Integer> vertexes, List<Edge<String, String>> edges, GraphKind graphKind) {
-        super(vertexes, edges, graphKind);
-    }
-
-    public aa(GraphKind graphKind) {
-        super(graphKind);
-    }
-
-    public aa(List<Integer> vertexes, GraphKind graphKind) {
-        super(vertexes, graphKind);
-    }
-}
 public class test {
     public static void main(String[] args) {
-        ArrayList<Edge<String,String>> edges = new ArrayList<>();
-        edges.add(new Edge<>(1, 1, "qw", "nihao"));
-        edges.add(new Edge<>(1, 2, "wq", "nihao"));
-        edges.add(new Edge<>(0, 2, "true", "nihao"));
-//        System.out.println(new aa(new ArrayList<Integer>() {
-//            {
-//                add(1);
-//                add(2);
-//                add(3);
-//            }
-//        }, edges, GraphKind.DN));
-        System.out.println(new aa(new ArrayList<Integer>() {
-            {
-                add(1);
-                add(2);
-                add(3);
-            }
-        }, GraphKind.DN));
+        GraphByAdjacentMatrix<String, String, String> graph = new GraphByAdjacentMatrix<>(GraphKind.DG);
+        for (int i = 1; i < 10; i++) {
+            graph.addVertex("V" + i);
+        }
+        graph.addEdgeByIndex(0, 1);
+        graph.addEdgeByIndex(0, 2);
+        graph.addEdgeByIndex(1, 3);
+        graph.addEdgeByIndex(1, 4);
+        graph.addEdgeByIndex(1, 8);
+        graph.addEdgeByIndex(2, 7);
+        graph.addEdgeByIndex(5, 2);
+        graph.addEdgeByIndex(5, 7);
+        graph.addEdgeByIndex(6, 3);
+        graph.addEdgeByIndex(6, 8);
+        System.out.println(graph);
+        graph.BFSTraverse().forEach(path -> {
+            System.out.println(path.stream().map(graph::getVertex).collect(Collectors.toList()));
+        });
+
     }
 }

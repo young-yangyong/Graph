@@ -1,7 +1,6 @@
 package graph;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -23,7 +22,7 @@ public interface Graph<E, T, V> {
 
     int findLastVertex(E vertex);
 
-    List<Integer> findVertexIndexes(E vertex);
+    Set<Integer> findVertexIndexes(E vertex);
 
     E getVertex(int index);
 
@@ -37,14 +36,15 @@ public interface Graph<E, T, V> {
 
     E deleteVertex(int index);
 
-    E deleteFirstVertex(E vertex);
+    int deleteFirstVertex(E vertex);
 
-    List<E> deleteVertexes(E vertex);
+    List<E> deleteVertexes(int[] vertexIndexes);
 
     Edge<T, V> addEdgeByIndex(int index1, int index2);
-    Edge<T, V> addEdgeByIndex(int index1, int index2,T weight,V info);
 
-    List<Edge<T, V>> addEdgesByIndex(Set<int[]> indexes);
+    Edge<T, V> addEdgeByIndex(int index1, int index2, T weight, V info);
+
+    Set<Edge<T, V>> addEdgesByIndexes(Set<int[]> indexes);
 
     Edge<T, V> deleteEdge(int index1, int index2);
 
@@ -78,44 +78,67 @@ public interface Graph<E, T, V> {
 
     E getFirstInAdjacentVertex(int index);
 
+    int getFirstInAdjacentVertexIndex(int index);
+
     List<E> getInAdjacentVertexes(int index);
+
+    Set<Integer> getInAdjacentVertexIndexes(int index);
 
     E getFirstOutAdjacentVertex(int index);
 
+    int getFirstOutAdjacentVertexIndex(int index);
+
     List<E> getOutAdjacentVertexes(int index);
+
+    Set<Integer> getOutAdjacentVertexIndexes(int index);
 
     E getFirstAdjacentVertex(int index);
 
+    int getFirstAdjacentVertexIndex(int index);
+
     List<E> getAdjacentVertexes(int index);
 
-    List<E> DFSTraverse(int index1, int index2);
+    Set<Integer> getAdjacentVertexIndexes(int index);
 
-    List<E> BFSTraverse(int index1, int index2);
+    List<List<Integer>> DFSTraverse();
 
+    List<List<Integer>> BFSTraverse();
 
     boolean isDirectedGraph();
-
-//    boolean isSparseGraph();
 
     boolean isCompletedGraph();
 
     boolean isConnectedGraph();
 
+    boolean isEmptyGraph();
+
     boolean isNetwork();
 
-    List<E> getVertexes();
+    Object[] getVertexes();
 
-    List<Edge<T, V>> getEdges();
+    Set<Edge<T, V>> getEdges();
 
-    List<E> getFirstPath(int index1, int index2);
+    List<Integer> getFirstPath(int index1, int index2);
 
-    List<List<E>> getPaths(int index1, int index2);
+    List<List<Integer>> getPaths(int index1, int index2);
 
     boolean hasPath(int index1, int index2);
 
-    List<E> getCycle(int index);
+    List<Integer> getFirstCycle(int index);
 
-    boolean isCycle(int index);
+    List<List<Integer>> getCycles(int index);
+
+    boolean hasCycle(int index);
+
+    boolean hasCycle();
+
+    List<List<Integer>> getCycles();
+
+    Edge<T, V> getLoop(int index);
+
+    boolean hasLoop(int index);
+
+    boolean hasLoop();
 
     boolean isConnected(int index1, int index2);
 
